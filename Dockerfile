@@ -10,6 +10,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN mkdir -p app /rootfs/usr/lib/
 
+# hadolint ignore=DL3008
 RUN apt-get update                             && \
     apt-get install --yes --no-install-recommends \
         ca-certificates                           \
