@@ -1,6 +1,6 @@
 ARG VERSION=5.2.6.8376
 
-FROM docker.io/debian:bullseye-slim as build
+FROM docker.io/debian:bullseye-slim AS build
 
 ARG VERSION
 
@@ -28,7 +28,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
         armv[67]?)  ARCH="arm" ;;    \
     *) exit 1 ;;                     \
     esac                          && \
-    wget --quiet --output-document -                                                                                        \
+    wget -qO-                                                                                        \
         "https://radarr.servarr.com/v1/update/master/updatefile?version=${VERSION}&os=linux&runtime=netcore&arch=${ARCH}" | \
     tar xvz --strip-components=1 --directory=app                                                                         && \
     mv app /rootfs/
