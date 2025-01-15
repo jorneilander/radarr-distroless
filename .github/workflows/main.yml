@@ -59,8 +59,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ghcr.io/${{ inputs.image-name }}
-          # docker.io/${{ inputs.image-name }}
+            ghcr.io/radarr-distroless
+          # docker.io/radarr-distroless
           tags: |
             type=raw,value=${{ inputs.software-version }},enable=${{ inputs.software-version != ''}}
             type=raw,value=latest,enable={{is_default_branch}}
@@ -70,7 +70,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           load: true
-          tags: ${{ inputs.image-name }}:test
+          tags: radarr-distroless:test
           build-args: |
             VERSION=${{ inputs.software-version || github.sha }}
           cache-from: type=gha
@@ -104,4 +104,4 @@ jobs:
       #   with:
       #     username: ${{ secrets.DOCKERHUB_USERNAME }}
       #     password: ${{ secrets.DOCKERHUB_TOKEN }}
-      #     repository: ${{ inputs.image-name }}
+      #     repository: radarr-distroless
