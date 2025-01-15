@@ -1,35 +1,26 @@
 on:
-  pull_request:
-
-  # push:
-  # schedule:
-  #   - cron: "0 3 * * *"
+  workflow_call:
+    inputs:
+      software-version:
+        required: false
+        type: string
+      platforms:
+        required: false
+        type: string
+        default: linux/amd64
+      image-name:
+        required: false
+        type: string
+        default: ${{ github.repository }}
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: false
+      DOCKERHUB_TOKEN:
+        required: false
 
 jobs:
-  get-radarr-version:
-    runs-on: ubuntu-22.04
-    outputs:
-      radarr-version: ${{ steps.radarr-version-step.outputs.LATEST_RADARR_VERSION }}
-      should-build: ${{ steps.should-build-step.outputs.SHOULD_BUILD }}
-    steps:
-      # NOTE: version fetching gotten from:
-      #       https://github.com/linuxserver/docker-radarr/blob/acededb0cb8f20e28dd8b4336bd2b955080fde89/Dockerfile#L24
-      - run: >-
-          echo LATEST_RADARR_VERSION=$(
-          curl -sL "https://radarr.servarr.com/v1/update/master/changes?runtime=netcore&os=linux"
-          | jq -r '.[0].version'
-          )
-          | tee -a "$GITHUB_ENV" "$GITHUB_OUTPUT"
-        id: radarr-version-step
-      - run: >-
-          docker manifest inspect "docker.io/guillaumedsde/radarr-distroless:${LATEST_RADARR_VERSION}"
-          || echo SHOULD_BUILD=1 >> "$GITHUB_OUTPUT"
-        id: should-build-step
-
   docker:
     runs-on: ubuntu-24.04
-    needs: get-radarr-version
-    if: ${{ needs.get-radarr-version.outputs.should-build == '1' }}
     steps:
       - uses: actions/checkout@v4
       - uses: hadolint/hadolint-action@v3.1.0
